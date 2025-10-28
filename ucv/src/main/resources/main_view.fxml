@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.Font?>
+<?import javafx.scene.paint.*?>
+
+<BorderPane xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="ace.ucv.MatrixMultiplicationController"
+            style="-fx-background-color: linear-gradient(to bottom right, #f0f4f7, #d9e2ec);">
+
+    <!-- Top MenuBar -->
+    <top>
+        <VBox>
+            <MenuBar style="-fx-background-color: #3b5998; -fx-text-fill: white;">
+                <Menu text="Options Menu" style="-fx-text-fill: white; -fx-font-weight: bold;">
+                    <MenuItem onAction="#saveOutputToFile" text="Save Output to Text File" />
+                    <MenuItem onAction="#savePerformanceMetrics" text="Save Performance Metrics to Excel" />
+                    <SeparatorMenuItem />
+                    <MenuItem onAction="#onExit" text="Exit" />
+                </Menu>
+            </MenuBar>
+
+            <!-- Input Area -->
+            <VBox spacing="15" style="-fx-padding: 15; -fx-background-color: rgba(255,255,255,0.8); -fx-border-radius: 10; -fx-background-radius: 10;">
+                
+                <HBox spacing="15" alignment="CENTER">
+                    <Label text="Rows Min:" textFill="#1b263b">
+                        <font>
+                            <Font name="System Bold" size="14"/>
+                        </font>
+                    </Label>
+                    <TextField fx:id="rowsMinField" styleClass="input-field"/>
+                    <Label text="Rows Max:" textFill="#1b263b">
+                        <font>
+                            <Font name="System Bold" size="14"/>
+                        </font>
+                    </Label>
+                    <TextField fx:id="rowsMaxField" styleClass="input-field"/>
+                </HBox>
+
+                <HBox spacing="15" alignment="CENTER">
+                    <Label text="Cols Min:" textFill="#1b263b">
+                        <font>
+                            <Font name="System Bold" size="14"/>
+                        </font>
+                    </Label>
+                    <TextField fx:id="colsMinField" styleClass="input-field"/>
+                    <Label text="Cols Max:" textFill="#1b263b">
+                        <font>
+                            <Font name="System Bold" size="14"/>
+                        </font>
+                    </Label>
+                    <TextField fx:id="colsMaxField" styleClass="input-field"/>
+                </HBox>
+
+                <HBox spacing="15" alignment="CENTER_LEFT">
+                    <Label text="Algorithm Choice" textFill="#1b263b">
+                        <font>
+                            <Font name="System Bold" size="16"/>
+                        </font>
+                    </Label>
+                    <VBox spacing="8">
+                        <RadioButton fx:id="classicSequentialButton" text="Sequential Approach" styleClass="custom-radio"/>
+                        <RadioButton fx:id="parallelButton" text="Parallel Approach" styleClass="custom-radio"/>
+                        <RadioButton fx:id="strassenButton" text="Strassen Approach" styleClass="custom-radio"/>
+                        <RadioButton fx:id="parallelStreamRadioButton" text="Parallel Stream Approach" styleClass="custom-radio"/>
+                        <RadioButton fx:id="forkJoinRadioButton" text="Fork-Join Approach" styleClass="custom-radio"/>
+                    </VBox>
+                </HBox>
+
+                <HBox alignment="CENTER">
+                    <Button onAction="#startMultiplication" text="Start Multiplication"
+                            onMouseEntered="#onButtonHoverEnter"
+                            onMouseExited="#onButtonHoverExit"
+                            style="-fx-background-color: #4CAF50; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 5;"/>
+                </HBox>
+
+            </VBox>
+        </VBox>
+    </top>
+
+    <!-- Bottom Output Area -->
+    <bottom>
+        <VBox spacing="10" style="-fx-padding: 15; -fx-background-color: rgba(255,255,255,0.85); -fx-border-radius: 10; -fx-background-radius: 10;">
+            <Label text="Matrix Multiplication Output" textFill="#1b263b">
+                <font>
+                    <Font name="System Bold" size="16"/>
+                </font>
+            </Label>
+            <TextArea fx:id="outputArea" editable="false" wrapText="true"
+                      style="-fx-font-family: 'Consolas'; -fx-font-size: 14; -fx-border-color: #1b263b; -fx-border-radius: 5; -fx-background-radius: 5; -fx-background-color: #fefefe;"
+                      VBox.vgrow="ALWAYS"/>
+        </VBox>
+    </bottom>
+</BorderPane>

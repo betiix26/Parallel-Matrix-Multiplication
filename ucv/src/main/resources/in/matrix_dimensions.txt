@@ -1,0 +1,4 @@
+rowsMin=1000
+rowsMax=1000
+colsMin=1000
+colsMax=1000
