@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.text.Font?>
+
+<BorderPane xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="ace.ucv.MatrixMultiplicationController"
+            stylesheets="@style.css"
+            styleClass="root-pane">
+
+    <!-- ===== Top Menu + Title ===== -->
+    <top>
+        <VBox spacing="10" alignment="CENTER">
+            <MenuBar styleClass="menu-bar">
+                <Menu text="Options">
+                    <MenuItem text="Save result to text file" onAction="#saveOutputToFile"/>
+                    <MenuItem text="Save performance metrics to Excel" onAction="#savePerformanceMetrics"/>
+                    <SeparatorMenuItem/>
+                    <MenuItem text="Exit" onAction="#onExit"/>
+                </Menu>
+            </MenuBar>
+
+            <!-- App Title -->
+            <Label text="Parallel Matrix Multiplication" styleClass="app-title" maxWidth="Infinity" maxHeight="Infinity" alignment="CENTER"/>
+        </VBox>
+    </top>
+
+    <!-- ===== Center Content ===== -->
+    <center>
+        <VBox alignment="CENTER" spacing="20">
+            <padding>
+                <Insets top="20" right="20" bottom="20" left="20"/>
+            </padding>
+
+            <!-- Card Input -->
+            <VBox spacing="15" alignment="CENTER" styleClass="card">
+
+                <!-- Dimensions -->
+                <HBox spacing="15" alignment="CENTER">
+                    <Label text="Rows Min:"/>
+                    <TextField fx:id="rowsMinField" promptText="e.g. 10" styleClass="input-field"/>
+                    <Label text="Rows Max:"/>
+                    <TextField fx:id="rowsMaxField" promptText="e.g. 100" styleClass="input-field"/>
+                </HBox>
+
+                <HBox spacing="15" alignment="CENTER">
+                    <Label text="Cols Min:"/>
+                    <TextField fx:id="colsMinField" promptText="e.g. 10" styleClass="input-field"/>
+                    <Label text="Cols Max:"/>
+                    <TextField fx:id="colsMaxField" promptText="e.g. 100" styleClass="input-field"/>
+                </HBox>
+
+                <!-- Algorithm selection -->
+                <TitledPane text="Select Multiplication Method" expanded="true" styleClass="titled-pane">
+                    <VBox spacing="6">
+                        <padding>
+                            <Insets top="10" right="10" bottom="10" left="10"/>
+                        </padding>
+                        <RadioButton fx:id="classicSequentialButton" text="Sequential Approach"/>
+                        <RadioButton fx:id="parallelButton" text="Parallel Approach"/>
+                        <RadioButton fx:id="strassenButton" text="Strassen Approach"/>
+                        <RadioButton fx:id="parallelStreamRadioButton" text="Parallel Stream Approach"/>
+                        <RadioButton fx:id="forkJoinRadioButton" text="Fork-Join Approach"/>
+                    </VBox>
+                </TitledPane>
+
+                <!-- Start button -->
+                <Button text="Start Multiplication" onAction="#startMultiplication"
+                        onMouseEntered="#onButtonHoverEnter"
+                        onMouseExited="#onButtonHoverExit"
+                        styleClass="main-button"/>
+            </VBox>
+
+            <!-- Output -->
+            <VBox spacing="8" alignment="CENTER_LEFT" styleClass="card">
+                <Label text="Multiplication Result" styleClass="section-title"/>
+                <TextArea fx:id="outputArea" editable="false" wrapText="true"
+                          styleClass="output-area" VBox.vgrow="ALWAYS"/>
+            </VBox>
+        </VBox>
+    </center>
+</BorderPane>

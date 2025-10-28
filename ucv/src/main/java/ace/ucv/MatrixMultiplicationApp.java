@@ -12,12 +12,12 @@ public class MatrixMultiplicationApp extends Application {
     public void start(Stage primaryStage) {
         try {
             // load the FXML file for the UI
-            Parent root = FXMLLoader.load(getClass().getResource("/main_view.fxml"));
+            Parent root = FXMLLoader.load(getClass().getResource("/MatrixMultiplicationView.fxml"));
 
 
             // set the title and scene
             primaryStage.setTitle("Matrix Multiplication App");
-            primaryStage.setScene(new Scene(root, 800, 600));
+            primaryStage.setScene(new Scene(root, 1100, 800));
             primaryStage.setResizable(false);
             primaryStage.show();
         } catch (Exception e) {
