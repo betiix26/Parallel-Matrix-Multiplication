@@ -1,6 +1,7 @@
 package ace.ucv;
 
 import ace.ucv.approach.fork_join.ForkJoinStreamMatrixMultiplication;
+import ace.ucv.approach.fork_join.RunForkJoinMultiplication;
 import ace.ucv.approach.stream.StreamParallelMultiplication;
 import ace.ucv.model.Matrix;
 import ace.ucv.approach.parallel.ParallelMatrixMultiplication;
@@ -16,7 +17,7 @@ import javafx.stage.FileChooser;
 
 import java.io.File;
 import java.nio.file.Files;
-import java.util.Random;
+import java.nio.file.Path;
 
 public class MatrixMultiplicationController {
     @FXML
@@ -43,8 +44,7 @@ public class MatrixMultiplicationController {
     private Tab saveTab;
 
     private final MatrixPrinter printer = new MatrixPrinter();
-    private final PerformanceMetricsRecorder metricsRecorder = new PerformanceMetricsRecorder(
-            "performance_metrics.xlsx");
+    private final PerformanceMetricsRecorder metricsRecorder = new PerformanceMetricsRecorder("performance_metrics.xlsx");
 
     private Matrix matrixA;
     private Matrix matrixB;
@@ -58,7 +58,7 @@ public class MatrixMultiplicationController {
         parallelStreamRadioButton.setToggleGroup(methodGroup);
         forkJoinRadioButton.setToggleGroup(methodGroup);
 
-        classicSequentialButton.setSelected(true); // default to sequential
+        classicSequentialButton.setSelected(true);
     }
 
     private void generateMatrices() {
@@ -68,7 +68,7 @@ public class MatrixMultiplicationController {
 
             RandomMatrixGenerator generator = new RandomMatrixGenerator();
             matrixA = generator.generateRandomMatrix(rows, cols);
-            matrixB = generator.generateRandomMatrix(cols, rows); 
+            matrixB = generator.generateRandomMatrix(cols, rows);
 
             outputArea.appendText("Matrices generated successfully.\n");
         } catch (NumberFormatException e) {
@@ -92,19 +92,20 @@ public class MatrixMultiplicationController {
             @Override
             protected String call() {
                 long startTime = System.nanoTime();
-                String result = performMultiplication(selectedMethod);
+                Matrix result = performMultiplication(selectedMethod);
                 long endTime = System.nanoTime();
 
                 double executionTime = (double) (endTime - startTime) / 1_000_000;
                 metricsRecorder.recordMetric("Timings", selectedMethod + " Execution Time", executionTime);
-                result += "\nExecution Time: " + executionTime + " ms";
-                return result;
+
+                saveComputationDetails(selectedMethod, result);
+
+                return selectedMethod + " completed.\nExecution Time: " + executionTime + " ms\n(Results saved to file.)";
             }
         };
 
         multiplicationTask.setOnSucceeded(event -> outputArea.setText(multiplicationTask.getValue()));
-        multiplicationTask.setOnFailed(event -> outputArea
-                .setText("An error occurred: " + multiplicationTask.getException().getMessage()));
+        multiplicationTask.setOnFailed(event -> outputArea.setText("An error occurred: " + multiplicationTask.getException().getMessage()));
 
         new Thread(multiplicationTask).start();
     }
@@ -123,52 +124,72 @@ public class MatrixMultiplicationController {
         return null;
     }
 
-    private String performMultiplication(String method) {
-        Matrix result;
+    private Matrix performMultiplication(String method) {
         switch (method) {
             case "Sequential":
-                result = new SequentialMatrixMultiplication().multiply(matrixA, matrixB);
-                break;
+                return new SequentialMatrixMultiplication().multiply(matrixA, matrixB);
             case "Parallel":
                 try {
-                    result = new ParallelMatrixMultiplication().multiply(matrixA, matrixB);
+                    return new ParallelMatrixMultiplication().multiply(matrixA, matrixB);
                 } catch (InterruptedException e) {
                     throw new RuntimeException("Parallel multiplication interrupted.", e);
                 }
-                break;
             case "Strassen":
-                result = new StrassenMatrixMultiplication().multiply(matrixA, matrixB);
-                break;
+                return new StrassenMatrixMultiplication().multiply(matrixA, matrixB);
             case "ParallelStream":
-                result = new StreamParallelMultiplication().multiply(matrixA, matrixB);
-                break;
+                return new StreamParallelMultiplication().multiply(matrixA, matrixB);
             case "ForkJoin":
-                result = ForkJoinStreamMatrixMultiplication.multiply(matrixA, matrixB);
-                break;
+                return ForkJoinStreamMatrixMultiplication.multiply(matrixA, matrixB);
             default:
                 throw new IllegalArgumentException("Unknown method: " + method);
         }
-        return formatOutput(matrixA, matrixB, result);
     }
 
-    private String formatOutput(Matrix matrixA, Matrix matrixB, Matrix result) {
-        StringBuilder sb = new StringBuilder();
-        sb.append("Matrix A:\n").append(matrixToString(matrixA)).append("\n");
-        sb.append("Matrix B:\n").append(matrixToString(matrixB)).append("\n");
-        sb.append("Result:\n").append(matrixToString(result));
-        return sb.toString();
-    }
-
-    private String matrixToString(Matrix matrix) {
-        StringBuilder sb = new StringBuilder();
-        for (int[] row : matrix.getData()) {
-            for (int value : row) {
-                sb.append(value).append("\t");
+    private void saveComputationDetails(String method, Matrix result) {
+        try {
+            File outDir = new File("src/main/resources/out");
+            if (!outDir.exists()) {
+                outDir.mkdirs();
             }
-            sb.append("\n");
+            Path filePath = new File(outDir, method.toLowerCase() + "_computation.txt").toPath();
+
+            String detailedLog = "";
+            switch (method) {
+                case "Strassen":
+                    StrassenMatrixMultiplication strassen = new StrassenMatrixMultiplication();
+                    strassen.multiply(matrixA, matrixB);
+                    detailedLog = strassen.getLog();
+                    break;
+                case "Parallel":
+                    ParallelMatrixMultiplication parallel = new ParallelMatrixMultiplication();
+                    parallel.multiply(matrixA, matrixB);
+                    detailedLog = parallel.getLog();
+                    break;
+                case "Sequential":
+                	SequentialMatrixMultiplication sequential = new SequentialMatrixMultiplication();
+                    sequential.multiply(matrixA, matrixB);
+                    detailedLog = sequential.getLog();
+                    break;
+                case "ParallelStream":
+                	StreamParallelMultiplication stream = new StreamParallelMultiplication();
+                    stream.multiply(matrixA, matrixB);
+                    detailedLog = stream.getLog();
+                    break;
+                case "ForkJoin":
+                    RunForkJoinMultiplication fork = new RunForkJoinMultiplication();
+                    result = fork.multiply(matrixA, matrixB);  
+                    detailedLog = fork.getLog();               
+                    break;
+                    
+            }
+
+            printer.writeComputationLog(matrixA, matrixB, result, method, filePath, detailedLog);
+
+        } catch (Exception e) {
+            outputArea.appendText("\nError saving computation details: " + e.getMessage());
         }
-        return sb.toString();
     }
+
 
     @FXML
     private void saveOutputToFile() {

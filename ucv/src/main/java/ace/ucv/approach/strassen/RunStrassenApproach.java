@@ -7,8 +7,10 @@ import ace.ucv.utils.FilePaths;
 import ace.ucv.utils.MatrixUtility;
 
 import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
 
 import static ace.ucv.utils.FilePaths.STRASSEN_XLSX;
 import static ace.ucv.utils.MatrixUtility.padMatrix;
@@ -41,13 +43,22 @@ public class RunStrassenApproach {
         long endTime = System.nanoTime();
         metricsRecorder.recordMetric("Timings", "Strassen Multiplication Time", (endTime - startTime) / 1_000_000_000.0);
 
-        Matrix result = MatrixUtility.cropMatrix(paddedResult, originalRowsA, originalColsB);
+//        Matrix result = MatrixUtility.cropMatrix(paddedResult, originalRowsA, originalColsB);
+//
+//        final Path filePath = Paths.get(FilePaths.STRASSEN_TXT);
+//        printer.writeMatrixToFile("Matrix A:", matrixA, filePath);
+//        printer.writeMatrixToFile("Matrix B:", matrixB, filePath);
+//        printer.writeMatrixToFile("Strassen Multiplication Result:", result, filePath);
+//
+//        metricsRecorder.saveToFile();
+        Matrix result = strassenMultiplication.multiply(matrixA, matrixB);
 
-        final Path filePath = Paths.get(FilePaths.STRASSEN_TXT);
+        Path filePath = Paths.get(FilePaths.STRASSEN_TXT);
         printer.writeMatrixToFile("Matrix A:", matrixA, filePath);
         printer.writeMatrixToFile("Matrix B:", matrixB, filePath);
         printer.writeMatrixToFile("Strassen Multiplication Result:", result, filePath);
 
-        metricsRecorder.saveToFile();
+        Files.writeString(filePath, "\nStrassen Computation Steps:\n" + strassenMultiplication.getLog(), StandardOpenOption.APPEND);
+
     }
 }

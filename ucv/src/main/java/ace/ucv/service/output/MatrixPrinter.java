@@ -14,28 +14,10 @@ import java.util.List;
 public class MatrixPrinter {
     private static final Logger logger = LogManager.getLogger(MatrixPrinter.class);
 
-    public void printMatrix(Matrix matrix) {
-        for (int i = 0; i < matrix.getRows(); i++) {
-            for (int j = 0; j < matrix.getCols(); j++) {
-                System.out.printf("%d\t", matrix.getData()[i][j]);
-            }
-            System.out.println();
-        }
-    }
-
-    public void writeMatrixToFile(String message, Matrix matrix, Path filePath) throws IOException {
-        List<String> lines = prepareMatrixData(message, matrix);
-        try {
-            Files.write(filePath, lines, StandardOpenOption.CREATE, StandardOpenOption.APPEND);
-        } catch (IOException e) {
-            logger.error(String.format("Error writing to file at path: %s", filePath));
-            throw e;
-        }
-    }
-
-    private List<String> prepareMatrixData(String message, Matrix matrix) {
+    public void writeMatrixToFile(String label, Matrix matrix, Path filePath) throws IOException {
         List<String> lines = new ArrayList<>();
-        lines.add(message);
+        lines.add("==== " + label + " ====");
+        lines.add("Size: " + matrix.getRows() + " x " + matrix.getCols());
         for (int i = 0; i < matrix.getRows(); i++) {
             StringBuilder line = new StringBuilder();
             for (int j = 0; j < matrix.getCols(); j++) {
@@ -43,7 +25,36 @@ public class MatrixPrinter {
             }
             lines.add(line.toString());
         }
-        lines.add("");
-        return lines;
+        lines.add(""); // newline separator
+
+        try {
+            Files.write(filePath, lines, StandardOpenOption.CREATE, StandardOpenOption.APPEND);
+        } catch (IOException e) {
+            logger.error("Error writing matrix to file: {}", filePath, e);
+            throw e;
+        }
     }
+
+    public void writeComputationLog(Matrix A, Matrix B, Matrix result, String methodName, Path outputPath, String detailedLog) {
+        try {
+            if (Files.exists(outputPath)) {
+                Files.delete(outputPath);
+            }
+            writeMatrixToFile("Matrix A (" + methodName + ")", A, outputPath);
+            writeMatrixToFile("Matrix B (" + methodName + ")", B, outputPath);
+            writeMatrixToFile("Result (" + methodName + ")", result, outputPath);
+
+            if (detailedLog != null && !detailedLog.isEmpty()) {
+                Files.writeString(outputPath, "\nComputation Steps:\n" + detailedLog + "\n", StandardOpenOption.APPEND);
+            }
+
+            Files.writeString(outputPath,
+                    "Verification: A * B = Result computed using " + methodName + "\n\n",
+                    StandardOpenOption.APPEND);
+
+        } catch (IOException e) {
+            logger.error("Failed to write computation log to file", e);
+        }
+    }
+
 }

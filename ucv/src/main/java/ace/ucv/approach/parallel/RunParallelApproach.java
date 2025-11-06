@@ -6,8 +6,10 @@ import ace.ucv.service.output.PerformanceMetricsRecorder;
 import ace.ucv.utils.FilePaths;
 
 import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
 
 import static ace.ucv.utils.FilePaths.PARALLEL_XLSX;
 
@@ -32,16 +34,18 @@ public class RunParallelApproach {
         } catch (InterruptedException e) {
             throw new RuntimeException("Parallel matrix multiplication was interrupted", e);
         }
-        long endTime = System.nanoTime();
-        metricsRecorder.recordMetric("Timings", "Parallel Multiplication Time", (endTime - startTime) / 1_000_000_000.0);
 
-        // write results to file
+        // write to file
         final Path filePath = Paths.get(FilePaths.PARALLEL_TXT);
         printer.writeMatrixToFile("Matrix A:", matrixA, filePath);
         printer.writeMatrixToFile("Matrix B:", matrixB, filePath);
         printer.writeMatrixToFile("Parallel Multiplication Result:", result, filePath);
 
-        // save all recorded metrics to the excel file
+        String detailedLog = parallelMultiplication.getLog();
+        if (!detailedLog.isEmpty()) {
+            Files.writeString(filePath, "\nComputation Steps:\n" + detailedLog + "\n", StandardOpenOption.APPEND);
+        }
+
         metricsRecorder.saveToFile();
     }
 }

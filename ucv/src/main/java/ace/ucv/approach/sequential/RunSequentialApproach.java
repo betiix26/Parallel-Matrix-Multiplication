@@ -6,8 +6,10 @@ import ace.ucv.service.output.PerformanceMetricsRecorder;
 import ace.ucv.utils.FilePaths;
 
 import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
 
 import static ace.ucv.utils.FilePaths.SEQUENTIAL_XLSX;
 
@@ -41,22 +43,36 @@ public class RunSequentialApproach {
 	public void runSetup(Matrix matrixA, Matrix matrixB) throws IOException {
 		// measure execution time of the multiplication
 		long startTime = System.nanoTime();
+//		Matrix result = sequentialMultiplication.multiply(matrixA, matrixB);
+//		long endTime = System.nanoTime();
+//
+//		// record execution time in seconds
+//		metricsRecorder.recordMetric("Timings", "Classic Multiplication Time", (endTime - startTime) / 1_000_000_000.0);
+//
+//		// define the path to the output text file
+//		Path filePath = Paths.get(FilePaths.SEQUENTIAL_TXT);
+//
+//		// write the input matrices and the result to the file
+//		printer.writeMatrixToFile("Matrix A:", matrixA, filePath);
+//		printer.writeMatrixToFile("Matrix B:", matrixB, filePath);
+//		printer.writeMatrixToFile("Classic Multiplication Result:", result, filePath);
+//
+//		// save performance metrics to Excel file
+//		metricsRecorder.saveToFile();
 		Matrix result = sequentialMultiplication.multiply(matrixA, matrixB);
-		long endTime = System.nanoTime();
 
-		// record execution time in seconds
-		metricsRecorder.recordMetric("Timings", "Classic Multiplication Time", (endTime - startTime) / 1_000_000_000.0);
-
-		// define the path to the output text file
 		Path filePath = Paths.get(FilePaths.SEQUENTIAL_TXT);
-
-		// write the input matrices and the result to the file
 		printer.writeMatrixToFile("Matrix A:", matrixA, filePath);
 		printer.writeMatrixToFile("Matrix B:", matrixB, filePath);
 		printer.writeMatrixToFile("Classic Multiplication Result:", result, filePath);
 
-		// save performance metrics to Excel file
+		String detailedLog = sequentialMultiplication.getLog();
+		if (!detailedLog.isEmpty()) {
+		    Files.writeString(filePath, "\nComputation Steps:\n" + detailedLog + "\n", StandardOpenOption.APPEND);
+		}
+
 		metricsRecorder.saveToFile();
+
 	}
 
 }

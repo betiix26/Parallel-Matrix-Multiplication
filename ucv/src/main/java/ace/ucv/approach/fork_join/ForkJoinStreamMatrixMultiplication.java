@@ -6,12 +6,21 @@ import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.RecursiveTask;
 import java.util.stream.IntStream;
 
+import java.util.concurrent.ForkJoinPool;
+import java.util.concurrent.RecursiveTask;
+import java.util.stream.IntStream;
+
 public class ForkJoinStreamMatrixMultiplication {
-    private static final int THRESHOLD = 64; 
-    private static ForkJoinPool pool; 
+    private static final int THRESHOLD = 64;
+    private static ForkJoinPool pool;
+    private static StringBuilder log = new StringBuilder();
 
     public static void setThreadPoolSize(int numThreads) {
         pool = new ForkJoinPool(numThreads);
+    }
+
+    public static String getLog() {
+        return log.toString();
     }
 
     public static Matrix multiply(Matrix A, Matrix B) {
@@ -22,15 +31,13 @@ public class ForkJoinStreamMatrixMultiplication {
         int rows = A.getRows();
         int cols = B.getCols();
         int common = A.getCols();
-
         Matrix result = new Matrix(rows, cols);
 
         if (pool == null) {
-            pool = new ForkJoinPool(); 
+            pool = new ForkJoinPool();
         }
 
         pool.invoke(new MatrixMultiplyTask(A, B, result, 0, rows, 0, cols, common));
-
         return result;
     }
 
@@ -55,14 +62,22 @@ public class ForkJoinStreamMatrixMultiplication {
             int colCount = colEnd - colStart;
 
             if (rowCount * colCount <= THRESHOLD) {
-                IntStream.range(rowStart, rowEnd).parallel().forEach(i -> {
-                    IntStream.range(colStart, colEnd).parallel().forEach(j -> {
+                IntStream.range(rowStart, rowEnd).forEach(i -> {
+                    for (int j = colStart; j < colEnd; j++) {
                         int sum = 0;
+                        StringBuilder elementLog = new StringBuilder();
+                        elementLog.append("Calculating element [").append(i).append(",").append(j).append("]: ");
                         for (int k = 0; k < common; k++) {
                             sum += A.getValue(i, k) * B.getValue(k, j);
+                            elementLog.append(A.getValue(i, k)).append("*").append(B.getValue(k, j));
+                            if (k < common - 1) elementLog.append(" + ");
                         }
                         result.setValue(i, j, sum);
-                    });
+                        elementLog.append(" = ").append(sum).append("\n");
+                        synchronized (log) {
+                            log.append(elementLog);
+                        }
+                    }
                 });
             } else {
                 int midRow = (rowStart + rowEnd) / 2;
