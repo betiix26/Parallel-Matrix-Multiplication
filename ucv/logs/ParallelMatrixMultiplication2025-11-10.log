@@ -1,0 +1,36 @@
+2025-11-10 15:56:22 [DEBUG] org.apache.poi.openxml4j.opc.ZipPackage - Save core properties part
+2025-11-10 15:56:22 [DEBUG] org.apache.poi.openxml4j.opc.ZipPackage - Save content types part
+2025-11-10 15:56:22 [DEBUG] org.apache.poi.openxml4j.opc.ZipPackage - Save package relationships
+2025-11-10 15:56:22 [DEBUG] org.apache.poi.openxml4j.opc.ZipPackage - Save part 'docProps/app.xml'
+2025-11-10 15:56:22 [DEBUG] org.apache.poi.openxml4j.opc.ZipPackage - Save part 'docProps/core.xml'
+2025-11-10 15:56:22 [DEBUG] org.apache.poi.openxml4j.opc.ZipPackage - Save part 'xl/sharedStrings.xml'
+2025-11-10 15:56:22 [DEBUG] org.apache.poi.openxml4j.opc.ZipPackage - Save part 'xl/styles.xml'
+2025-11-10 15:56:22 [DEBUG] org.apache.poi.openxml4j.opc.ZipPackage - Save part 'xl/workbook.xml'
+2025-11-10 15:56:22 [DEBUG] org.apache.poi.openxml4j.opc.ZipPackage - Save part 'xl/worksheets/sheet1.xml'
+2025-11-10 15:56:22 [DEBUG] org.apache.poi.openxml4j.opc.ZipPackage - Save content types part
+2025-11-10 15:56:22 [DEBUG] org.apache.poi.openxml4j.opc.ZipPackage - Save package relationships
+2025-11-10 15:56:22 [DEBUG] org.apache.poi.openxml4j.opc.ZipPackage - Save part 'docProps/app.xml'
+2025-11-10 15:56:22 [DEBUG] org.apache.poi.openxml4j.opc.ZipPackage - Save part 'docProps/core.xml'
+2025-11-10 15:56:22 [DEBUG] org.apache.poi.openxml4j.opc.ZipPackage - Save part 'xl/sharedStrings.xml'
+2025-11-10 15:56:22 [DEBUG] org.apache.poi.openxml4j.opc.ZipPackage - Save part 'xl/styles.xml'
+2025-11-10 15:56:22 [DEBUG] org.apache.poi.openxml4j.opc.ZipPackage - Save part 'xl/workbook.xml'
+2025-11-10 15:56:22 [DEBUG] org.apache.poi.openxml4j.opc.ZipPackage - Save part 'xl/worksheets/sheet1.xml'
+2025-11-10 15:56:22 [INFO ] ace.ucv.service.output.PerformanceMetricsRecorder - Metrics written to Excel file successfully.
+2025-11-10 22:05:04 [DEBUG] org.apache.poi.openxml4j.opc.ZipPackage - Save core properties part
+2025-11-10 22:05:04 [DEBUG] org.apache.poi.openxml4j.opc.ZipPackage - Save content types part
+2025-11-10 22:05:04 [DEBUG] org.apache.poi.openxml4j.opc.ZipPackage - Save package relationships
+2025-11-10 22:05:04 [DEBUG] org.apache.poi.openxml4j.opc.ZipPackage - Save part 'docProps/app.xml'
+2025-11-10 22:05:04 [DEBUG] org.apache.poi.openxml4j.opc.ZipPackage - Save part 'docProps/core.xml'
+2025-11-10 22:05:04 [DEBUG] org.apache.poi.openxml4j.opc.ZipPackage - Save part 'xl/sharedStrings.xml'
+2025-11-10 22:05:04 [DEBUG] org.apache.poi.openxml4j.opc.ZipPackage - Save part 'xl/styles.xml'
+2025-11-10 22:05:04 [DEBUG] org.apache.poi.openxml4j.opc.ZipPackage - Save part 'xl/workbook.xml'
+2025-11-10 22:05:04 [DEBUG] org.apache.poi.openxml4j.opc.ZipPackage - Save part 'xl/worksheets/sheet1.xml'
+2025-11-10 22:05:04 [DEBUG] org.apache.poi.openxml4j.opc.ZipPackage - Save content types part
+2025-11-10 22:05:04 [DEBUG] org.apache.poi.openxml4j.opc.ZipPackage - Save package relationships
+2025-11-10 22:05:04 [DEBUG] org.apache.poi.openxml4j.opc.ZipPackage - Save part 'docProps/app.xml'
+2025-11-10 22:05:04 [DEBUG] org.apache.poi.openxml4j.opc.ZipPackage - Save part 'docProps/core.xml'
+2025-11-10 22:05:04 [DEBUG] org.apache.poi.openxml4j.opc.ZipPackage - Save part 'xl/sharedStrings.xml'
+2025-11-10 22:05:04 [DEBUG] org.apache.poi.openxml4j.opc.ZipPackage - Save part 'xl/styles.xml'
+2025-11-10 22:05:04 [DEBUG] org.apache.poi.openxml4j.opc.ZipPackage - Save part 'xl/workbook.xml'
+2025-11-10 22:05:04 [DEBUG] org.apache.poi.openxml4j.opc.ZipPackage - Save part 'xl/worksheets/sheet1.xml'
+2025-11-10 22:05:04 [INFO ] ace.ucv.service.output.PerformanceMetricsRecorder - Metrics written to Excel file successfully.

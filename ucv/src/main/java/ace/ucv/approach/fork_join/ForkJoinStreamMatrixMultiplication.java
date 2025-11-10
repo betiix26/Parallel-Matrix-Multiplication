@@ -1,19 +1,15 @@
 package ace.ucv.approach.fork_join;
 
 import ace.ucv.model.Matrix;
-
-import java.util.concurrent.ForkJoinPool;
-import java.util.concurrent.RecursiveTask;
-import java.util.stream.IntStream;
-
 import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.RecursiveTask;
 import java.util.stream.IntStream;
 
 public class ForkJoinStreamMatrixMultiplication {
+
     private static final int THRESHOLD = 64;
     private static ForkJoinPool pool;
-    private static StringBuilder log = new StringBuilder();
+    private static final StringBuilder log = new StringBuilder();
 
     public static void setThreadPoolSize(int numThreads) {
         pool = new ForkJoinPool(numThreads);
@@ -28,16 +24,39 @@ public class ForkJoinStreamMatrixMultiplication {
             throw new IllegalArgumentException("Matrix dimensions do not match for multiplication.");
         }
 
+        log.append("=== ForkJoin Stream Multiplication Started ===\n");
+
+        long totalStart = System.nanoTime();
+        long readStart = System.nanoTime();
+
         int rows = A.getRows();
         int cols = B.getCols();
         int common = A.getCols();
+
         Matrix result = new Matrix(rows, cols);
+
+        long readEnd = System.nanoTime();
+        double readTime = (readEnd - readStart) / 1_000_000.0;
+
+        long computeStart = System.nanoTime();
 
         if (pool == null) {
             pool = new ForkJoinPool();
         }
 
         pool.invoke(new MatrixMultiplyTask(A, B, result, 0, rows, 0, cols, common));
+
+        long computeEnd = System.nanoTime();
+        double computeTime = (computeEnd - computeStart) / 1_000_000.0;
+
+        long totalEnd = System.nanoTime();
+        double totalTime = (totalEnd - totalStart) / 1_000_000.0;
+
+        log.append("=== ForkJoin Stream Multiplication Completed ===\n");
+        log.append(String.format("Data read/preparation time: %.4f ms\n", readTime));
+        log.append(String.format("Computation time: %.4f ms\n", computeTime));
+        log.append(String.format("Total execution time: %.4f ms\n", totalTime));
+
         return result;
     }
 
@@ -45,7 +64,8 @@ public class ForkJoinStreamMatrixMultiplication {
         private final Matrix A, B, result;
         private final int rowStart, rowEnd, colStart, colEnd, common;
 
-        public MatrixMultiplyTask(Matrix matrixA, Matrix matrixB, Matrix result, int rowStart, int rowEnd, int colStart, int colEnd, int common) {
+        public MatrixMultiplyTask(Matrix matrixA, Matrix matrixB, Matrix result,
+                                  int rowStart, int rowEnd, int colStart, int colEnd, int common) {
             this.A = matrixA;
             this.B = matrixB;
             this.result = result;
@@ -66,14 +86,17 @@ public class ForkJoinStreamMatrixMultiplication {
                     for (int j = colStart; j < colEnd; j++) {
                         int sum = 0;
                         StringBuilder elementLog = new StringBuilder();
-                        elementLog.append("Calculating element [").append(i).append(",").append(j).append("]: ");
+                        elementLog.append("Element [").append(i).append(",").append(j).append("]: ");
+
                         for (int k = 0; k < common; k++) {
                             sum += A.getValue(i, k) * B.getValue(k, j);
                             elementLog.append(A.getValue(i, k)).append("*").append(B.getValue(k, j));
                             if (k < common - 1) elementLog.append(" + ");
                         }
+
                         result.setValue(i, j, sum);
                         elementLog.append(" = ").append(sum).append("\n");
+
                         synchronized (log) {
                             log.append(elementLog);
                         }
